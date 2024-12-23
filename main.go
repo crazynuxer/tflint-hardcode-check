@@ -2,10 +2,10 @@ package main
 
 import (
     "github.com/terraform-linters/tflint-plugin-sdk/tflint"
-    "./ruleset"
+    "github.com/crazynuxer/tflint-hardcode-check/ruleset"
 )
 
 func main() {
-    tflint.Main(ruleset.New)
+    tflint.Main(ruleset.New())
 }
 
