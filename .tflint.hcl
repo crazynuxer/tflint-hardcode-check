@@ -1,4 +1,4 @@
-plugin "template" {
+plugin "hardcode" {
   enabled = true
 }
 
