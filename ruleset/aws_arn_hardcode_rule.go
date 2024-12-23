@@ -1,53 +1,49 @@
 package ruleset
 
 import (
-	"github.com/hashicorp/hcl/v2"
-	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
+    "github.com/hashicorp/hcl/v2"
+    "github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
-type AwsArnHardcodeRule struct{}
+type AwsArnHardcodeRule struct {
+    tflint.DefaultRule
+}
 
-// NewAwsArnHardcodeRule creates a new instance of the rule
 func NewAwsArnHardcodeRule() *AwsArnHardcodeRule {
-	return &AwsArnHardcodeRule{}
+    return &AwsArnHardcodeRule{}
 }
 
-// Name returns the rule name
 func (r *AwsArnHardcodeRule) Name() string {
-	return "aws_arn_hardcode_check"
+    return "aws_arn_hardcode_rule"
 }
 
-// Enabled returns whether the rule is enabled by default
 func (r *AwsArnHardcodeRule) Enabled() bool {
-	return true
+    return true
 }
 
-// Severity returns the rule severity
 func (r *AwsArnHardcodeRule) Severity() tflint.Severity {
-	return tflint.ERROR
+    return tflint.ERROR
 }
 
-// Link returns the rule reference link
 func (r *AwsArnHardcodeRule) Link() string {
-	return "https://example.com/docs/aws_arn_hardcode_check"
+    return "https://example.com/docs/rules/aws_arn_hardcode_rule"
 }
 
-// Check validates the Terraform configuration
 func (r *AwsArnHardcodeRule) Check(runner tflint.Runner) error {
-	return runner.WalkExpressions(nil, func(expr hcl.Expression) error {
-		value, diags := runner.Evaluate(expr)
-		if diags.HasErrors() {
-			return nil
-		}
-
-		if value.Type().IsPrimitiveType() && value.AsString() == "arn:aws:" {
-			runner.EmitIssue(
-				r,
-				"Hardcoded ARN detected. Consider using variables or data sources instead.",
-				expr.Range(),
-			)
-		}
-		return nil
-	})
+    return runner.WalkExpressions(tflint.ExprWalkFunc(func(expr hcl.Expression) hcl.Diagnostics {
+        var value string
+        err := runner.EvaluateExpr(expr, &value, nil)
+        if err != nil {
+            return nil // Skip if not evaluatable
+        }
+        if value == "arn:aws:" {
+            runner.EmitIssue(
+                r,
+                "Hardcoded ARN found, use variables instead.",
+                expr.Range(),
+            )
+        }
+        return nil
+    }))
 }
 
