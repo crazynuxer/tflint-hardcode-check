@@ -1,0 +1,27 @@
+# Go-related files
+*.exe
+*.dll
+*.so
+*.dylib
+*.log
+*.out
+*.test
+*.prof
+*.sum
+
+# Directory for Go modules
+vendor/
+
+# Editor and IDE configurations
+.idea/
+.vscode/
+*.swp
+
+# MacOS system files
+.DS_Store
+
+# Release folder
+release/
+
+# Logs
+*.log
